@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="da">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Frivillighenvendelser til matching – Mit Røde Kors</title>
+<style>
+/* ==========================================================================
+   Røde Kors – prototype-stylesheet
+   Kilde: Røde Kors Digitalt Designsystem (Figma). Brug KUN disse variabler.
+   Platform vælges med en klasse på <body>:
+     .rk-dk      = rodekors.dk
+     .rk-mrk     = Mit Røde Kors (MRK)
+     .rk-anden   = andre platforme (MRK-stil uden header, sidemenu og footer)
+   ========================================================================== */
+
+/* ---------- 1. Primitiver (farvepalet) ---------- */
+:root {
+  --rk-red-50: #FEF5F5;  --rk-red-100: #FFF0F0; --rk-red-200: #FFDEDE;
+  --rk-red-300: #FFC3C3; --rk-red-400: #FF9999; --rk-red-500: #FF5F60;
+  --rk-red-600: #E30A0B; --rk-red-700: #CE0708; --rk-red-800: #AA0A0B; --rk-red-900: #8C1011;
+
+  --rk-grey-0: #FFFFFF;  --rk-grey-50: #F7F7F7; --rk-grey-100: #F5F5F6;
+  --rk-grey-200: #E7E5E7; --rk-grey-300: #C9C5C5; --rk-grey-400: #989598;
+  --rk-grey-500: #767277; --rk-grey-600: #5A585B; --rk-grey-700: #484748;
+  --rk-grey-800: #373538; --rk-grey-900: #000000;
+
+  --rk-sage-50: #F7F7F5;  --rk-sage-100: #E4E3DD; --rk-sage-200: #CBC6BD;
+  --rk-sage-300: #A4998C; --rk-sage-500: #8D8070; --rk-sage-600: #73665B;
+  --rk-sage-700: #5D524B; --rk-sage-800: #514742; --rk-sage-900: #473F3C;
+
+  --rk-green-500: #68AC12; --rk-yellow-500: #FCE400;
+
+  /* Typografi: Gotham hvis den er installeret, ellers Verdana */
+  --rk-font: "Gotham", "Gotham Book", Verdana, sans-serif;
+
+  /* Afstande (4-px-skala) */
+  --rk-s-1: 4px; --rk-s-2: 8px; --rk-s-3: 12px; --rk-s-4: 16px; --rk-s-5: 24px;
+  --rk-s-6: 32px; --rk-s-7: 40px; --rk-s-8: 48px; --rk-s-9: 64px; --rk-s-10: 80px; --rk-s-11: 96px;
+
+  --rk-radius-card: 8px;
+  --rk-radius-modal: 12px;
+  --rk-shadow: 0 2px 12px rgba(0, 0, 0, .08);
+}
+
+/* ---------- 2. Roller (semantiske farver) – fælles ---------- */
+:root {
+  --rk-text: var(--rk-grey-800);
+  --rk-text-subtle: var(--rk-grey-500);
+  --rk-text-on-primary: var(--rk-grey-0);
+  --rk-text-meta: var(--rk-sage-600);
+  --rk-text-muted: var(--rk-sage-700);
+  --rk-link: var(--rk-red-600);
+  --rk-primary: var(--rk-red-600);
+  --rk-primary-hover: var(--rk-red-800);
+  --rk-primary-pressed: var(--rk-red-900);
+  --rk-surface: var(--rk-grey-0);
+  --rk-error: var(--rk-red-600);
+  --rk-success: var(--rk-green-500);
+  --rk-warning: var(--rk-yellow-500);
+}
+
+/* ---------- 3. Platforme ---------- */
+.rk-dk {
+  --rk-page-bg: var(--rk-grey-0);
+  --rk-header-bg: var(--rk-red-50);
+  --rk-surface-subtle: var(--rk-red-50);
+  --rk-surface-soft: var(--rk-grey-100);
+  --rk-border: var(--rk-grey-300);
+  --rk-border-strong: var(--rk-grey-400);
+  --rk-footer-bg: var(--rk-grey-100);
+  --rk-btn-radius: 4px; --rk-btn-weight: 700; --rk-btn-pad: 16px 32px; --rk-btn-height: 56px;
+  --rk-field-radius: 4px;
+  --rk-h1: 48px; --rk-h2: 32px; --rk-h3: 24px; --rk-h4: 20px; --rk-h5: 18px;
+  --rk-lead: 18px; --rk-body: 16px; --rk-label: 14px; --rk-small: 12px;
+}
+.rk-mrk, .rk-anden {
+  --rk-page-bg: var(--rk-sage-50);
+  --rk-header-bg: var(--rk-grey-0);
+  --rk-surface-subtle: var(--rk-sage-50);
+  --rk-surface-soft: var(--rk-sage-100);
+  --rk-border: var(--rk-grey-200);
+  --rk-border-strong: var(--rk-grey-800);
+  --rk-footer-bg: var(--rk-grey-0);
+  --rk-btn-radius: 30px; --rk-btn-weight: 400; --rk-btn-pad: 12px 32px; --rk-btn-height: 46px;
+  --rk-field-radius: 4px;
+  --rk-h1: 44px; --rk-h2: 28px; --rk-h3: 22px; --rk-h4: 20px; --rk-h5: 18px;
+  --rk-lead: 18px; --rk-body: 16px; --rk-label: 14px; --rk-small: 12px;
+}
+@media (max-width: 767px) {
+  .rk-dk  { --rk-h1: 32px; --rk-h2: 26px; --rk-h3: 20px; }
+  .rk-mrk, .rk-anden { --rk-h1: 32px; --rk-h2: 26px; }
+}
+
+/* ---------- 4. Grundlag ---------- */
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body {
+  font-family: var(--rk-font); font-size: var(--rk-body); line-height: 1.5;
+  color: var(--rk-text); background: var(--rk-page-bg);
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, h4, h5 { margin: 0 0 var(--rk-s-4); font-weight: 700; line-height: 1.3; color: var(--rk-text); }
+h1 { font-size: var(--rk-h1); } h2 { font-size: var(--rk-h2); } h3 { font-size: var(--rk-h3); }
+h4 { font-size: var(--rk-h4); } h5 { font-size: var(--rk-h5); }
+p { margin: 0 0 var(--rk-s-4); }
+.rk-lead { font-size: var(--rk-lead); line-height: 1.5; }
+.rk-small { font-size: var(--rk-label); }
+.rk-meta { font-size: var(--rk-small); color: var(--rk-text-meta); text-transform: uppercase; letter-spacing: .02em; }
+.rk-meta b { font-weight: 700; }
+a { color: var(--rk-link); text-decoration: underline; text-underline-offset: 3px; }
+a:hover { color: var(--rk-primary-hover); }
+img { max-width: 100%; display: block; }
+svg.rk-icon { width: 24px; height: 24px; flex: none; color: currentColor; }
+:focus-visible { outline: 2px solid var(--rk-primary); outline-offset: 2px; }
+.rk-visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Layout */
+.rk-container { max-width: 1280px; margin: 0 auto; padding: 0 var(--rk-s-5); }
+.rk-reading { max-width: 760px; }
+.rk-section { padding: var(--rk-s-9) 0; }
+.rk-band { background: var(--rk-surface-soft); }
+.rk-stack > * + * { margin-top: var(--rk-s-4); }
+.rk-grid { display: grid; gap: var(--rk-s-5); }
+.rk-grid-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.rk-grid-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.rk-grid-4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+@media (max-width: 900px) { .rk-grid-3, .rk-grid-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 600px) { .rk-grid-2, .rk-grid-3, .rk-grid-4 { grid-template-columns: 1fr; } }
+.rk-center { text-align: center; }
+
+/* ---------- 5. Knapper ---------- */
+.rk-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: var(--rk-s-2);
+  min-height: var(--rk-btn-height); padding: var(--rk-btn-pad);
+  border-radius: var(--rk-btn-radius); border: 1px solid transparent;
+  font: inherit; font-size: var(--rk-body); font-weight: var(--rk-btn-weight); line-height: 1.2;
+  text-decoration: none; cursor: pointer; transition: background .15s, color .15s, border-color .15s;
+}
+.rk-btn svg { width: 20px; height: 20px; }
+.rk-btn--primary { background: var(--rk-primary); color: var(--rk-text-on-primary); }
+.rk-btn--primary:hover { background: var(--rk-primary-hover); color: var(--rk-text-on-primary); }
+.rk-btn--primary:active { background: var(--rk-primary-pressed); }
+.rk-btn--secondary { background: var(--rk-surface); color: var(--rk-primary); border-color: var(--rk-primary); }
+.rk-btn--secondary:hover { background: var(--rk-red-50); color: var(--rk-primary-hover); border-color: var(--rk-primary-hover); }
+.rk-btn--tertiary { background: var(--rk-surface); color: var(--rk-text); border-color: var(--rk-border-strong); }
+.rk-btn--tertiary:hover { background: var(--rk-grey-100); color: var(--rk-text); }
+.rk-btn--small { min-height: 36px; padding: 6px 20px; font-size: var(--rk-label); }
+.rk-btn[disabled], .rk-btn--disabled { background: var(--rk-grey-200); color: var(--rk-grey-500); border-color: var(--rk-grey-200); cursor: not-allowed; }
+.rk-btn-row { display: flex; flex-wrap: wrap; gap: var(--rk-s-4); align-items: center; }
+.rk-textlink { display: inline-flex; align-items: center; gap: var(--rk-s-2); color: var(--rk-text); }
+
+/* Indholdslink (hvid "pille" med rød pil) – MRK */
+.rk-contentlink {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--rk-s-4);
+  padding: 16px 32px; background: var(--rk-surface); border-radius: 30px;
+  color: var(--rk-text); text-decoration: none;
+}
+.rk-contentlink svg { color: var(--rk-primary); width: 20px; height: 20px; }
+.rk-contentlink:hover { color: var(--rk-text); box-shadow: var(--rk-shadow); }
+
+/* Fil-download */
+.rk-download {
+  display: flex; align-items: center; justify-content: space-between; gap: var(--rk-s-4);
+  padding: 16px 32px; background: var(--rk-sage-100); border-radius: var(--rk-radius-card); color: var(--rk-text);
+}
+.rk-download a { display: inline-flex; align-items: center; gap: var(--rk-s-2); color: var(--rk-text); }
+
+/* ---------- 6. Formularer ---------- */
+.rk-field { display: flex; flex-direction: column; gap: 6px; margin-bottom: var(--rk-s-5); }
+.rk-label { font-size: var(--rk-label); font-weight: 700; }
+.rk-help { font-size: var(--rk-label); margin-top: -2px; }
+.rk-input, .rk-select, .rk-textarea {
+  width: 100%; min-height: 48px; padding: 12px 16px; font: inherit; font-size: var(--rk-body);
+  color: var(--rk-text); background: var(--rk-surface);
+  border: 1px solid var(--rk-border); border-radius: var(--rk-field-radius);
+}
+.rk-mrk .rk-input, .rk-mrk .rk-select, .rk-mrk .rk-textarea,
+.rk-anden .rk-input, .rk-anden .rk-select, .rk-anden .rk-textarea { border-color: var(--rk-grey-200); }
+.rk-textarea { min-height: 120px; resize: vertical; }
+.rk-input::placeholder, .rk-textarea::placeholder { color: var(--rk-text-subtle); }
+.rk-input:focus, .rk-select:focus, .rk-textarea:focus { outline: none; border-color: var(--rk-grey-800); box-shadow: 0 0 0 1px var(--rk-grey-800); }
+.rk-input[readonly] { background: var(--rk-sage-100); border-color: var(--rk-sage-100); }
+.rk-select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M3.27 7.64L12 16.36l8.73-8.72' stroke='%23373538' stroke-width='1.3' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 48px; }
+.rk-input-wrap { position: relative; }
+.rk-input-wrap > svg { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); width: 18px; height: 18px; }
+.rk-field--error .rk-input, .rk-field--error .rk-textarea { border-color: var(--rk-error); }
+.rk-field--error .rk-error-text { color: var(--rk-error); font-size: var(--rk-label); }
+.rk-choice { display: flex; align-items: center; gap: var(--rk-s-3); padding: 6px 0; cursor: pointer; }
+.rk-choice input { width: 22px; height: 22px; margin: 0; accent-color: var(--rk-primary); flex: none; }
+.rk-mrk .rk-choice input[type="checkbox"], .rk-anden .rk-choice input[type="checkbox"] { accent-color: var(--rk-grey-800); }
+fieldset.rk-fieldset { border: 0; padding: 0; margin: 0 0 var(--rk-s-5); }
+fieldset.rk-fieldset legend { font-size: var(--rk-label); font-weight: 700; margin-bottom: var(--rk-s-2); padding: 0; }
+
+/* Beløbsvælger (Støt) – rodekors.dk */
+.rk-amounts { display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--rk-s-2); }
+.rk-amounts label { position: relative; }
+.rk-amounts input { position: absolute; opacity: 0; }
+.rk-amounts span { display: flex; align-items: center; justify-content: center; min-height: 48px; border: 1px solid var(--rk-border); border-radius: 4px; background: var(--rk-surface); cursor: pointer; }
+.rk-amounts input:checked + span { background: var(--rk-primary); border-color: var(--rk-primary); color: var(--rk-text-on-primary); font-weight: 700; }
+.rk-amounts input:focus-visible + span { outline: 2px solid var(--rk-primary); outline-offset: 2px; }
+.rk-segmented { display: inline-flex; border: 1px solid var(--rk-border); border-radius: 4px; overflow: hidden; }
+.rk-segmented label { position: relative; }
+.rk-segmented input { position: absolute; opacity: 0; }
+.rk-segmented span { display: block; padding: 12px 24px; cursor: pointer; background: var(--rk-surface); }
+.rk-segmented input:checked + span { background: var(--rk-primary); color: var(--rk-text-on-primary); font-weight: 700; }
+
+/* ---------- 7. Kort og indhold ---------- */
+.rk-card { background: var(--rk-surface); border-radius: var(--rk-radius-card); overflow: hidden; display: flex; flex-direction: column; color: var(--rk-text); text-decoration: none; }
+.rk-card:hover { box-shadow: var(--rk-shadow); color: var(--rk-text); }
+.rk-card__img { aspect-ratio: 3 / 2; object-fit: cover; width: 100%; }
+.rk-card__body { padding: var(--rk-s-5); display: flex; flex-direction: column; gap: var(--rk-s-2); }
+.rk-card__title { font-size: var(--rk-h4); font-weight: 700; line-height: 1.3; margin: 0; }
+.rk-feature { display: grid; grid-template-columns: 1fr 1fr; gap: var(--rk-s-6); align-items: center; background: var(--rk-surface); border-radius: var(--rk-radius-card); padding: var(--rk-s-5); }
+.rk-feature img { border-radius: var(--rk-radius-card); width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+@media (max-width: 767px) { .rk-feature { grid-template-columns: 1fr; } }
+.rk-factbox { background: var(--rk-red-200); border-radius: var(--rk-radius-card); padding: var(--rk-s-6) var(--rk-s-6) var(--rk-s-7); }
+.rk-factbox h3 { font-size: var(--rk-h4); }
+.rk-quote { color: var(--rk-primary); font-size: 22px; font-style: italic; line-height: 1.4; margin: var(--rk-s-6) 0; padding-left: var(--rk-s-6); }
+.rk-quote cite { display: block; margin-top: var(--rk-s-2); font-size: var(--rk-label); font-style: normal; color: var(--rk-text); }
+.rk-badge { display: inline-block; padding: 2px 6px; background: var(--rk-red-200); color: var(--rk-text); font-size: var(--rk-small); font-weight: 700; text-transform: uppercase; letter-spacing: .03em; border-radius: 2px; }
+.rk-contact { background: var(--rk-sage-100); border-radius: var(--rk-radius-card); padding: var(--rk-s-5) var(--rk-s-4); text-align: center; display: flex; flex-direction: column; gap: var(--rk-s-2); align-items: center; }
+.rk-avatar { width: 84px; height: 84px; border-radius: 50%; background: var(--rk-grey-100); display: grid; place-items: center; overflow: hidden; color: var(--rk-grey-400); }
+.rk-avatar img { width: 100%; height: 100%; object-fit: cover; }
+.rk-pill { display: flex; align-items: center; gap: var(--rk-s-3); width: 100%; padding: 10px 16px; background: var(--rk-surface); border-radius: 30px; color: var(--rk-text); text-decoration: none; }
+
+/* Genvej (MRK) */
+.rk-shortcut { display: flex; align-items: center; gap: var(--rk-s-3); padding: 8px; background: var(--rk-surface); border-radius: var(--rk-radius-card); color: var(--rk-text); }
+.rk-shortcut__icon { width: 48px; height: 48px; border-radius: var(--rk-radius-card); background: var(--rk-red-50); color: var(--rk-primary); display: grid; place-items: center; flex: none; }
+.rk-shortcut__icon svg { width: 26px; height: 26px; }
+
+/* Listerække (MRK, fx frivillige) */
+.rk-row { display: grid; grid-template-columns: auto 1.4fr 1.2fr 1fr auto; gap: var(--rk-s-4); align-items: center; padding: var(--rk-s-4); background: var(--rk-surface); border-radius: var(--rk-radius-card); }
+.rk-row .rk-avatar { width: 70px; height: 70px; }
+@media (max-width: 900px) { .rk-row { grid-template-columns: auto 1fr; } .rk-row > :nth-child(n+3) { grid-column: 2; } }
+
+/* Harmonika */
+.rk-accordion details { border-bottom: 1px solid var(--rk-border); }
+.rk-accordion details:first-of-type { border-top: 1px solid var(--rk-border); }
+.rk-accordion summary { list-style: none; display: flex; justify-content: space-between; align-items: center; padding: 16px 0; cursor: pointer; }
+.rk-accordion summary::-webkit-details-marker { display: none; }
+.rk-accordion summary::after { content: "+"; color: var(--rk-primary); font-size: 24px; line-height: 1; }
+.rk-accordion details[open] summary::after { content: "–"; }
+.rk-accordion .rk-accordion__body { padding: 0 0 var(--rk-s-4); }
+
+/* Faner */
+.rk-tabs { display: flex; gap: var(--rk-s-6); border-bottom: 1px solid var(--rk-border); margin-bottom: var(--rk-s-6); overflow-x: auto; }
+.rk-tabs a { padding: 8px 0 10px; color: var(--rk-text); text-decoration: none; border-bottom: 3px solid transparent; white-space: nowrap; }
+.rk-tabs a[aria-current="page"] { color: var(--rk-primary); font-weight: 700; border-bottom-color: var(--rk-primary); }
+
+/* Brødkrumme */
+.rk-breadcrumb { font-size: var(--rk-small); color: var(--rk-text); display: flex; flex-wrap: wrap; gap: 6px; margin: var(--rk-s-5) 0 var(--rk-s-8); }
+.rk-breadcrumb a { color: var(--rk-text-subtle); text-decoration: none; }
+.rk-breadcrumb span[aria-current] { font-weight: 700; }
+
+/* Billede-pladsholder (når der ikke findes et sikkert stockfoto) */
+.rk-img-placeholder { background: var(--rk-sage-100); color: var(--rk-sage-700); display: grid; place-items: center; text-align: center; padding: var(--rk-s-5); font-size: var(--rk-label); aspect-ratio: 3 / 2; border-radius: var(--rk-radius-card); }
+
+/* Modal */
+.rk-modal-backdrop { position: fixed; inset: 0; background: rgba(55, 53, 56, .55); display: grid; place-items: center; padding: var(--rk-s-4); z-index: 50; }
+.rk-modal { background: var(--rk-surface); border-radius: var(--rk-radius-modal); padding: var(--rk-s-6) var(--rk-s-6) var(--rk-s-9); width: min(710px, 100%); position: relative; }
+.rk-modal h2 { font-size: 22px; }
+.rk-modal__close { position: absolute; top: 20px; right: 20px; background: none; border: 0; padding: 6px; cursor: pointer; color: var(--rk-text); }
+
+/* Fremskridt (trin) – rodekors.dk formularer */
+.rk-steps { display: flex; justify-content: space-between; list-style: none; padding: 0; margin: 0 0 var(--rk-s-8); counter-reset: s; }
+.rk-steps li { flex: 1; text-align: center; position: relative; font-size: var(--rk-label); }
+.rk-steps li::before { counter-increment: s; content: counter(s); display: grid; place-items: center; width: 44px; height: 44px; margin: 0 auto 8px; border-radius: 50%; border: 1px solid var(--rk-grey-400); background: var(--rk-surface); position: relative; z-index: 1; }
+.rk-steps li + li::after { content: ""; position: absolute; top: 22px; right: 50%; width: 100%; height: 2px; background: var(--rk-grey-300); }
+.rk-steps li.is-done::before { content: "✓"; background: var(--rk-primary); border-color: var(--rk-primary); color: #fff; }
+.rk-steps li.is-current::before { background: var(--rk-primary); border-color: var(--rk-primary); color: #fff; font-weight: 700; }
+.rk-steps li.is-current { font-weight: 700; }
+.rk-steps li.is-done + li::after, .rk-steps li.is-current::after { background: var(--rk-primary); }
+
+/* ---------- 8. rodekors.dk: topbar, header, hero, footer (fra rkdk/Header-rkdk og rkdk/Footer) ---------- */
+.rk-dk-topbar { background: var(--rk-surface); font-size: var(--rk-body); }
+.rk-dk-topbar ul { list-style: none; display: flex; justify-content: flex-end; align-items: center; gap: var(--rk-s-6); margin: 0; padding: 6px 0; min-height: 40px; }
+.rk-dk-topbar a { color: var(--rk-text); text-decoration: none; }
+.rk-dk-topbar a:hover { text-decoration: underline; }
+.rk-dk-lang { display: inline-flex; align-items: center; gap: 8px; padding: 3px 10px 3px 14px; border: 1px solid var(--rk-grey-300); border-radius: 20px; }
+.rk-dk-lang svg { width: 20px; height: 20px; }
+/* Headerbåndet er lyserødt; korset "hænger" ned under båndets bund (ca. 23 px) */
+.rk-dk-header { position: relative; background: var(--rk-header-bg); z-index: 10; }
+.rk-dk-header__inner { position: relative; display: flex; align-items: center; justify-content: space-between; gap: var(--rk-s-5); min-height: 76px; }
+.rk-dk-nav ul { list-style: none; display: flex; gap: var(--rk-s-5); margin: 0; padding: 0; }
+.rk-dk-nav a { color: var(--rk-text); text-decoration: none; display: inline-flex; align-items: center; gap: 6px; font-size: var(--rk-body); }
+.rk-dk-nav a svg { width: 18px; height: 18px; }
+.rk-dk-nav a:hover { text-decoration: underline; }
+.rk-dk-logo { position: absolute; left: 50%; top: 30px; width: 68px; height: 68px; transform: translateX(-50%); z-index: 11; }
+.rk-dk-logo .rk-logo { width: 68px; height: 68px; }
+.rk-dk-header__tools { display: flex; justify-content: flex-end; gap: var(--rk-s-4); align-items: center; }
+.rk-dk-search { display: flex; align-items: center; gap: 10px; background: var(--rk-surface); border: 1px solid var(--rk-grey-300); border-radius: 4px; padding: 0 14px; height: 42px; width: 256px; color: var(--rk-text-subtle); font-size: var(--rk-label); }
+.rk-dk-search svg { width: 18px; height: 18px; color: var(--rk-text); }
+.rk-dk-header .rk-btn--primary { min-height: 42px; min-width: 94px; padding: 8px 24px; font-size: var(--rk-label); }
+.rk-dk-burger { display: none; background: none; border: 0; padding: 4px; color: var(--rk-text); }
+.rk-dk-mobile-stoet { display: none !important; }
+@media (max-width: 1023px) {
+  .rk-dk-topbar, .rk-dk-nav, .rk-dk-search, .rk-dk-header__tools .rk-btn--primary { display: none; }
+  .rk-dk-mobile-stoet { display: inline-flex !important; }
+  .rk-dk-header__inner { min-height: 56px; }
+  .rk-dk-logo { top: 22px; width: 48px; height: 48px; }
+  .rk-dk-logo .rk-logo { width: 48px; height: 48px; }
+  .rk-dk-burger { display: inline-flex; }
+}
+/* Hero: stort foto og hvid boks, der overlapper fotoets bund (rkdk/Content-navigation-rkdk, Type=Hero) */
+.rk-dk-hero { position: relative; }
+.rk-dk-hero__img, .rk-dk-hero > .rk-img-placeholder { width: 100%; height: 520px; object-fit: cover; aspect-ratio: auto; border-radius: 0; }
+.rk-dk-hero__box { position: relative; margin: -110px auto 0; max-width: 1160px; background: var(--rk-surface); padding: var(--rk-s-7) var(--rk-s-9) var(--rk-s-8); text-align: center; box-shadow: var(--rk-shadow); }
+.rk-dk-hero__box h1 { font-size: var(--rk-h1); margin-bottom: var(--rk-s-5); }
+.rk-dk-hero__box .rk-lead { font-size: 20px; max-width: 860px; margin: 0 auto var(--rk-s-6); }
+.rk-btn--hero { min-width: min(480px, 100%); min-height: 60px; font-size: 20px; font-weight: 400; }
+@media (max-width: 767px) { .rk-dk-hero__img, .rk-dk-hero > .rk-img-placeholder { height: 280px; } .rk-dk-hero__box { margin: -60px var(--rk-s-4) 0; padding: var(--rk-s-5); } .rk-btn--hero { min-width: 100%; } }
+/* Footer (rkdk/Footer) */
+.rk-dk-footer { background: var(--rk-grey-50); padding: var(--rk-s-9) 0 var(--rk-s-5); margin-top: var(--rk-s-10); font-size: var(--rk-label); }
+.rk-dk-footer__grid { display: grid; grid-template-columns: 156px 160px 1px 1fr 1fr; gap: var(--rk-s-8); }
+.rk-dk-footer__divider { background: var(--rk-grey-200); }
+.rk-dk-footer h2 { font-size: var(--rk-body); font-weight: 700; margin: 0 0 4px; }
+.rk-dk-footer p { margin: 0 0 var(--rk-s-5); line-height: 1.5; }
+.rk-dk-footer a { color: var(--rk-text); text-decoration: none; }
+.rk-dk-footer a:hover { text-decoration: underline; }
+.rk-dk-footer__links h2 { color: var(--rk-primary); text-transform: uppercase; margin-bottom: var(--rk-s-4); }
+.rk-dk-footer__links ul { list-style: none; padding: 0; margin: 0; display: grid; gap: var(--rk-s-4); font-size: var(--rk-body); }
+.rk-dk-footer__bottom { border-top: 1px solid var(--rk-grey-200); margin-top: var(--rk-s-7); padding-top: var(--rk-s-5); display: flex; justify-content: space-between; align-items: center; gap: var(--rk-s-4); flex-wrap: wrap; }
+.rk-dk-footer__bottom ul { list-style: none; display: flex; flex-wrap: wrap; gap: var(--rk-s-5); margin: 0; padding: 0; }
+.rk-dk-footer__social { display: flex; align-items: center; gap: var(--rk-s-4); font-size: var(--rk-body); font-weight: 700; }
+.rk-dk-footer__social a { display: inline-flex; }
+.rk-dk-footer__social svg { width: 24px; height: 24px; }
+@media (max-width: 900px) { .rk-dk-footer__grid { grid-template-columns: 1fr 1fr; } .rk-dk-footer__divider { display: none; } }
+@media (max-width: 600px) { .rk-dk-footer__grid { grid-template-columns: 1fr; } }
+
+/* ---------- 9. MRK: header, sidemenu, layout, footer ---------- */
+.rk-mrk-header { background: var(--rk-header-bg); }
+.rk-mrk-header__inner { display: flex; align-items: center; justify-content: space-between; gap: var(--rk-s-5); min-height: 92px; padding: 0 var(--rk-s-5); }
+.rk-mrk-logo { height: 44px; width: auto; }
+.rk-mrk-header__tools { display: flex; align-items: center; gap: var(--rk-s-6); }
+.rk-mrk-search { display: flex; align-items: center; justify-content: space-between; width: 300px; height: 46px; padding: 4px 4px 4px 20px; border: 1px solid var(--rk-grey-200); border-radius: 30px; background: var(--rk-surface); color: var(--rk-text-subtle); font-size: var(--rk-label); }
+.rk-mrk-search button { display: inline-flex; align-items: center; gap: 6px; height: 36px; padding: 0 16px; border: 0; border-radius: 30px; background: var(--rk-primary); color: #fff; font: inherit; font-size: var(--rk-small); font-weight: 700; text-transform: uppercase; cursor: pointer; }
+.rk-mrk-search button svg { width: 14px; height: 14px; }
+.rk-mrk-logout { display: inline-flex; align-items: center; gap: 8px; color: var(--rk-text); text-decoration: none; font-size: var(--rk-label); }
+.rk-mrk-logout svg { width: 20px; height: 20px; }
+.rk-mrk-mobile-tools { display: none; gap: var(--rk-s-4); }
+.rk-mrk-layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); gap: var(--rk-s-9); max-width: 1280px; margin: 0 auto; padding: var(--rk-s-6) var(--rk-s-5) var(--rk-s-11); }
+.rk-mrk-main { min-width: 0; }
+.rk-mrk-sidebar { background: var(--rk-surface); border-radius: var(--rk-radius-card); padding: var(--rk-s-4) 0; align-self: start; }
+.rk-mrk-sidebar h2 { font-size: var(--rk-small); font-weight: 700; text-transform: uppercase; color: var(--rk-grey-500); letter-spacing: .04em; margin: var(--rk-s-2) var(--rk-s-5) var(--rk-s-2); }
+.rk-mrk-sidebar ul { list-style: none; margin: 0; padding: 0; }
+.rk-mrk-sidebar hr { border: 0; border-top: 1px solid var(--rk-grey-200); margin: var(--rk-s-3) var(--rk-s-3); }
+.rk-mrk-sidebar a { position: relative; display: flex; align-items: center; gap: var(--rk-s-3); padding: 10px var(--rk-s-5); color: var(--rk-text); text-decoration: none; }
+.rk-mrk-sidebar a svg { width: 20px; height: 20px; }
+.rk-mrk-sidebar a:hover { background: var(--rk-sage-50); }
+.rk-mrk-sidebar a[aria-current="page"] { color: var(--rk-primary); font-weight: 700; }
+.rk-mrk-sidebar a[aria-current="page"]::before { content: ""; position: absolute; left: 0; top: 6px; bottom: 6px; width: 4px; background: var(--rk-primary); }
+.rk-count { display: inline-grid; place-items: center; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 10px; background: var(--rk-primary); color: #fff; font-size: var(--rk-small); font-weight: 700; }
+.rk-mrk-footer { background: var(--rk-footer-bg); padding: var(--rk-s-10) 0 var(--rk-s-9); }
+.rk-mrk-footer__grid { display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: var(--rk-s-6); max-width: 1100px; margin: 0 auto; padding: 0 var(--rk-s-5); }
+.rk-mrk-footer h2 { font-size: var(--rk-h2); }
+.rk-mrk-footer h3 { font-size: var(--rk-h5); margin-bottom: var(--rk-s-2); }
+.rk-mrk-footer p { margin: 0; line-height: 1.7; }
+.rk-mrk-footer__links { grid-column: 2 / 4; display: flex; gap: var(--rk-s-5); margin-top: var(--rk-s-7); }
+@media (max-width: 1023px) {
+  .rk-mrk-layout { grid-template-columns: 1fr; gap: var(--rk-s-5); }
+  .rk-mrk-sidebar, .rk-mrk-header__tools { display: none; }
+  .rk-mrk-mobile-tools { display: flex; }
+  .rk-mrk-header__inner { min-height: 68px; padding: 0 var(--rk-s-4); }
+  .rk-mrk-footer__grid { grid-template-columns: 1fr; }
+  .rk-mrk-footer__links { grid-column: auto; flex-direction: column; gap: var(--rk-s-2); }
+}
+
+/* ---------- 10. Andre platforme ---------- */
+.rk-anden { --rk-page-bg: var(--rk-sage-50); }
+.rk-anden-header { background: var(--rk-grey-0); border-bottom: 1px solid var(--rk-grey-200); }
+.rk-anden-header__inner { max-width: 1100px; margin: 0 auto; padding: 18px var(--rk-s-5); display: flex; align-items: center; gap: var(--rk-s-5); }
+.rk-anden-header__logo { width: 136px; flex: none; }
+@media (max-width: 767px) {
+  .rk-anden-header__inner { padding-top: 14px; padding-bottom: 14px; }
+  .rk-anden-header__logo { width: 122px; }
+}
+.rk-anden-main { max-width: 1100px; margin: 0 auto; padding: var(--rk-s-9) var(--rk-s-5) var(--rk-s-11); }
+
+/* ---------- 11. Logoer (brug KUN de leverede SVG'er – aldrig gentegnet) ---------- */
+.rk-logo { display: block; width: 100%; height: auto; }
+.rk-logo--mit-roede-kors { width: 230px; height: 44px; }
+@media (max-width: 400px) { .rk-logo--mit-roede-kors { width: 180px; height: auto; } }
+
+/* ---------- 12. rodekors.dk: indholdsnavigation (rkdk/Content-navigation-rkdk) ---------- */
+/* Foto i fuld kortbredde; tekstboksen overlapper fotoets bund og er rykket ind i begge sider */
+.rk-dk-contentnav { display: block; color: var(--rk-text); text-decoration: none; }
+.rk-dk-contentnav__img, .rk-dk-contentnav > .rk-img-placeholder { width: 100%; aspect-ratio: 5 / 4; object-fit: cover; border-radius: 0; }
+.rk-dk-contentnav__box { position: relative; margin: -88px 30px 0; padding: var(--rk-s-6) var(--rk-s-6) var(--rk-s-7); background: var(--rk-red-50); box-shadow: 0 6px 20px rgba(0, 0, 0, .06); }
+.rk-dk-contentnav--grey .rk-dk-contentnav__box { background: var(--rk-grey-100); }
+.rk-dk-contentnav__box h3 { font-size: 22px; margin-bottom: var(--rk-s-2); }
+.rk-dk-contentnav__box p { font-size: 18px; line-height: 1.4; margin-bottom: var(--rk-s-4); }
+.rk-dk-contentnav:hover h3 { text-decoration: underline; }
+.rk-dk-arrowlink { display: inline-flex; align-items: center; gap: var(--rk-s-3); color: var(--rk-primary); font-weight: 700; font-size: 20px; text-decoration: none; }
+.rk-dk-arrowlink svg { width: 22px; height: 22px; }
+@media (max-width: 767px) { .rk-dk-contentnav__box { margin: -48px 16px 0; padding: var(--rk-s-5); } }
+.rk-segmented-label { display: block; font-size: var(--rk-label); font-weight: 700; margin-bottom: var(--rk-s-2); }
+.rk-dk .rk-segmented span { font-size: var(--rk-label); padding: 12px 20px; }
+
+
+</style>
+<style>
+.mt-sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.mt-kilde { display: flex; align-items: center; gap: var(--rk-s-4); margin-bottom: var(--rk-s-4); }
+.mt-kilde .rk-select { width: 430px; max-width: 100%; border-radius: var(--rk-radius-card); }
+
+.mt-toolbar { display: flex; align-items: center; gap: var(--rk-s-4); flex-wrap: wrap; }
+.mt-search { position: relative; flex: 1 1 320px; max-width: 600px; }
+.mt-search .rk-input { border-radius: 999px; padding-left: 16px; padding-right: 52px; min-height: 50px; width: 100%; }
+.mt-search__icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); display: flex; pointer-events: none; color: var(--rk-text); }
+.mt-search__icon svg { width: 24px; height: 24px; }
+
+.mt-toggle { display: inline-flex; background: var(--rk-surface); border-radius: 999px; padding: 6px; gap: 4px; }
+.mt-toggle__btn { font: inherit; font-size: var(--rk-label); border: 0; background: transparent; color: var(--rk-text); border-radius: 999px; padding: 8px 16px; cursor: pointer; }
+.mt-toggle__btn[aria-pressed="true"] { background: var(--rk-grey-800); color: var(--rk-text-on-primary); }
+.mt-toggle__btn:hover[aria-pressed="false"] { background: var(--rk-grey-100); }
+
+.mt-copy { font: inherit; display: inline-flex; align-items: center; gap: var(--rk-s-2); background: var(--rk-surface); border: 0; border-radius: 999px; padding: 13px 20px; color: var(--rk-text); cursor: pointer; margin-left: auto; }
+.mt-copy svg { width: 20px; height: 20px; }
+.mt-copy:hover { background: var(--rk-grey-100); }
+
+.mt-status { min-height: 1.5em; margin: var(--rk-s-3) 0; font-size: var(--rk-label); color: var(--rk-text-muted); }
+.mt-list { display: flex; flex-direction: column; gap: var(--rk-s-4); }
+.mt-row { display: grid; grid-template-columns: 190px 1fr 1fr 1.65fr auto; gap: var(--rk-s-4); align-items: start; background: var(--rk-surface); border-radius: var(--rk-radius-card); padding: var(--rk-s-5) var(--rk-s-5); }
+.mt-row p { margin: 0; font-size: var(--rk-label); line-height: 1.55; }
+.mt-row .mt-h { font-weight: 700; margin-bottom: var(--rk-s-2); }
+.mt-row__name { align-self: center; }
+.mt-row .mt-name { font-size: var(--rk-body); font-weight: 700; }
+.mt-row__action { align-self: center; }
+.mt-row__action .rk-btn { min-width: 84px; min-height: 46px; padding: 8px 24px; }
+.mt-warn { color: var(--rk-error); }
+.mt-empty { background: var(--rk-surface); border-radius: var(--rk-radius-card); padding: var(--rk-s-5); }
+
+
+.rk-modal-backdrop { align-items: start; overflow-y: auto; padding: 64px var(--rk-s-4); }
+.rk-modal-backdrop[hidden] { display: none; }
+.mt-modal { padding: 64px var(--rk-s-6) var(--rk-s-7); border-radius: var(--rk-radius-card); display: flex; flex-direction: column; gap: var(--rk-s-5); }
+.mt-modal h2 { margin: 0; }
+.mt-info { margin: 0; background: var(--rk-sage-100); border-radius: var(--rk-radius-card); padding: var(--rk-s-5) var(--rk-s-5) 14px; }
+.mt-info__row { display: grid; grid-template-columns: 154px 1fr; gap: var(--rk-s-2); align-items: center; padding: 6px 0 8px; }
+.mt-info__row + .mt-info__row { border-top: 1px solid var(--rk-sage-200); padding-top: 8px; }
+.mt-info dt { font-weight: 700; line-height: 1.18; }
+.mt-info dd { margin: 0; line-height: 1.5; overflow-wrap: anywhere; }
+.mt-info__row--mail dd { display: flex; align-items: center; justify-content: space-between; gap: var(--rk-s-3); flex-wrap: wrap; }
+.mt-mailbtns { display: inline-flex; gap: var(--rk-s-2); }
+.mt-smallbtn { font: inherit; font-size: var(--rk-label); display: inline-flex; align-items: center; gap: var(--rk-s-2); min-height: 36px; padding: 8px 16px; border: 0; border-radius: 999px; background: var(--rk-surface); color: var(--rk-text); text-decoration: none; cursor: pointer; }
+.mt-smallbtn:hover { background: var(--rk-grey-100); color: var(--rk-text); }
+.mt-smallbtn svg { width: 20px; height: 20px; flex: none; }
+.mt-noter { margin: 0; }
+.mt-noter .rk-label { font-size: var(--rk-body); }
+.mt-noter .rk-textarea { min-height: 143px; border-color: var(--rk-sage-100); border-radius: var(--rk-radius-card); }
+.mt-naeste__titel { font-size: var(--rk-body); margin: 0 0 10px; }
+.mt-naeste__tekst { font-size: var(--rk-label); line-height: 22px; margin: 0 0 var(--rk-s-5); }
+.mt-naeste__knapper { display: flex; flex-direction: column; align-items: center; gap: var(--rk-s-4); }
+.mt-naeste__knapper .rk-btn--secondary { min-width: 287px; }
+.mt-modal__divider { border: 0; border-top: 1px solid var(--rk-sage-200); margin: 0; width: 100%; }
+.mt-modal__gem { display: flex; justify-content: flex-end; }
+
+.mt-tb { padding: 72px var(--rk-s-6) var(--rk-s-9); display: flex; flex-direction: column; gap: var(--rk-s-7); }
+.mt-tb .rk-modal__close { top: 28px; right: 28px; }
+.mt-tb__intro h2 { font-size: 20px; line-height: 28px; margin: 0 0 var(--rk-s-2); }
+.mt-tb__intro p { font-size: var(--rk-lead); line-height: 1.5; margin: 0; }
+.mt-tb .rk-field, .mt-tb .rk-fieldset { margin: 0; }
+.mt-tb fieldset.rk-fieldset legend { font-size: var(--rk-body); margin-bottom: var(--rk-s-2); }
+.mt-tb .rk-label { font-size: var(--rk-body); }
+.mt-tb .rk-textarea { min-height: 169px; border-color: var(--rk-sage-100); border-radius: var(--rk-radius-card); }
+.mt-tb__knapper { display: flex; justify-content: center; gap: var(--rk-s-7); flex-wrap: wrap; }
+.mt-tb__knapper .rk-btn { min-width: 180px; }
+
+@media (max-width: 900px) {
+  .mt-row { grid-template-columns: 1fr 1fr; }
+  .mt-row__name { grid-column: 1 / -1; }
+  .mt-row__action { grid-column: 1 / -1; }
+  .mt-copy { margin-left: 0; }
+}
+@media (max-width: 560px) {
+  .mt-row { grid-template-columns: 1fr; }
+  .mt-kilde { flex-wrap: wrap; }
+  .rk-modal-backdrop { padding: var(--rk-s-4) var(--rk-s-2); }
+  .mt-modal { padding: 56px var(--rk-s-4) var(--rk-s-6); }
+  .mt-info { padding: var(--rk-s-4); }
+  .mt-info__row { grid-template-columns: 1fr; gap: 2px; }
+  .mt-naeste__knapper .rk-btn { width: 100%; min-width: 0; }
+  .mt-tb { padding: 64px var(--rk-s-4) var(--rk-s-6); gap: var(--rk-s-6); }
+  .mt-tb__knapper { gap: var(--rk-s-4); }
+  .mt-tb__knapper .rk-btn { width: 100%; }
+}
+
+/* Formularfelter tegnes altid i lyst tema – også når browseren/appen kører mørkt tema */
+:root { color-scheme: light; }
+
+/* Egne radioknapper og afkrydsningsbokse – uafhængige af browserens tema */
+.rk-choice input[type="radio"], .rk-choice input[type="checkbox"] {
+  -webkit-appearance: none; appearance: none; color-scheme: light;
+  width: 22px; height: 22px; margin: 0; flex: none; cursor: pointer;
+  display: grid; place-content: center;
+  background: var(--rk-surface); border: 1px solid var(--rk-grey-800);
+}
+.rk-choice input[type="radio"] { border-radius: 50%; }
+.rk-choice input[type="radio"]::before { content: ""; width: 12px; height: 12px; border-radius: 50%; background: var(--rk-primary); transform: scale(0); }
+.rk-choice input[type="radio"]:checked { border-color: var(--rk-primary); }
+.rk-choice input[type="radio"]:checked::before { transform: scale(1); }
+.rk-choice input[type="checkbox"] { border-radius: 4px; }
+.rk-choice input[type="checkbox"]:checked { background: var(--rk-grey-800) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none'%3E%3Cpath d='M5 12.5l4.5 4.5L19 7.5' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center / 16px no-repeat; }
+.rk-choice input:focus-visible { outline: 2px solid var(--rk-grey-800); outline-offset: 2px; }
+.rk-field--error .rk-choice input:not(:checked) { border-color: var(--rk-error); }
+
+</style>
+</head>
+<body class="rk-mrk">
+
+<!-- ===== HEADER (fast – må ikke ændres) ===== -->
+<header class="rk-mrk-header">
+  <div class="rk-mrk-header__inner">
+    <a href="#" aria-label="Mit Røde Kors – startside"><svg class="rk-logo rk-logo--mit-roede-kors" viewBox="0 0 230 44" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Mit Røde Kors"><path d="M44 14.7045H29.2973V0H14.7027V14.7045H0V29.3009H14.7027V44H29.2973V29.3009H44V14.7045Z" fill="#E30A0B"/><path d="M224.337 29.4194C222.152 29.4194 219.947 28.6568 218.216 27.111L220.091 24.8645C221.39 25.9363 222.75 26.6164 224.399 26.6164C225.697 26.6164 226.48 26.1011 226.48 25.2561V25.2149C226.48 24.4111 225.986 23.9989 223.574 23.3806C220.668 22.6386 218.793 21.8348 218.793 18.97V18.9288C218.793 16.3113 220.895 14.5801 223.842 14.5801C225.945 14.5801 227.738 15.2396 229.201 16.4144L227.552 18.8052C226.274 17.9189 225.017 17.3831 223.801 17.3831C222.585 17.3831 221.946 17.9395 221.946 18.6403V18.6815C221.946 19.6296 222.565 19.9387 225.058 20.5776C227.985 21.3402 229.634 22.3913 229.634 24.9058V24.947C229.634 27.8118 227.449 29.4194 224.337 29.4194Z" fill="#373538"/><path d="M204.312 29.2132V14.7861H210.907C212.741 14.7861 214.163 15.3014 215.111 16.2495C215.915 17.0532 216.348 18.1868 216.348 19.5471V19.5883C216.348 21.9172 215.091 23.3806 213.256 24.0607L216.781 29.2132H213.071L209.979 24.5966H207.485V29.2132H204.312ZM207.485 21.7936H210.701C212.246 21.7936 213.133 20.9692 213.133 19.7532V19.712C213.133 18.3517 212.185 17.6509 210.639 17.6509H207.485V21.7936Z" fill="#373538"/><path d="M193.808 29.4608C189.357 29.4608 186.162 26.1426 186.162 22.0412V21.9999C186.162 17.8985 189.398 14.5391 193.85 14.5391C198.301 14.5391 201.496 17.8573 201.496 21.9587V21.9999C201.496 26.1013 198.26 29.4608 193.808 29.4608ZM193.85 26.5342C196.405 26.5342 198.178 24.5144 198.178 22.0412V21.9999C198.178 19.5267 196.364 17.4657 193.808 17.4657C191.253 17.4657 189.48 19.4855 189.48 21.9587V21.9999C189.48 24.4731 191.294 26.5342 193.85 26.5342Z" fill="#373538"/><path d="M172.873 29.2132V14.7861H176.047V21.0928L181.9 14.7861H185.734L179.86 20.9073L186.002 29.2132H182.189L177.716 23.0714L176.047 24.8027V29.2132H172.873Z" fill="#373538"/><path d="M152.887 29.2132V14.7861H163.769V17.6097H156.04V20.5364H162.841V23.36H156.04V26.3896H163.872V29.2132H152.887Z" fill="#373538"/><path d="M136.765 29.2132V14.7861H142.391C146.925 14.7861 150.058 17.8983 150.058 21.9585V21.9997C150.058 26.0599 146.925 29.2132 142.391 29.2132H136.765ZM139.939 26.3484H142.391C144.988 26.3484 146.74 24.5966 146.74 22.0409V21.9997C146.74 19.444 144.988 17.6509 142.391 17.6509H139.939V26.3484Z" fill="#373538"/><path d="M131.084 14.6833H134.114L132.094 17.0329C133.269 18.3313 133.949 20.0626 133.949 21.9587V21.9999C133.949 26.1013 130.713 29.4608 126.261 29.4608C124.757 29.4608 123.417 29.0898 122.284 28.4303L121.48 29.3165H118.45L120.47 26.967C119.295 25.6685 118.615 23.9373 118.615 22.0412V21.9999C118.615 17.8985 121.851 14.5391 126.303 14.5391C127.787 14.5391 129.147 14.9307 130.28 15.5696L131.084 14.6833ZM126.303 26.596C128.879 26.596 130.693 24.535 130.693 22.0412V21.9999C130.693 21.0725 130.425 20.1862 129.971 19.4443L124.262 26.1013C124.86 26.4105 125.54 26.596 126.303 26.596ZM121.871 21.9999C121.871 22.948 122.119 23.8136 122.593 24.5556L128.302 17.8985C127.704 17.5894 127.003 17.4039 126.261 17.4039C123.685 17.4039 121.871 19.4649 121.871 21.9587V21.9999Z" fill="#373538"/><path d="M104.36 29.2132V14.7861H110.956C112.79 14.7861 114.212 15.3014 115.16 16.2495C115.964 17.0532 116.397 18.1868 116.397 19.5471V19.5883C116.397 21.9172 115.139 23.3806 113.305 24.0607L116.829 29.2132H113.12L110.028 24.5966H107.534V29.2132H104.36ZM107.534 21.7936H110.749C112.295 21.7936 113.181 20.9692 113.181 19.7532V19.712C113.181 18.3517 112.233 17.6509 110.688 17.6509H107.534V21.7936Z" fill="#373538"/><path d="M88.1761 29.2132V17.7128H83.7861V14.7861H95.74V17.7128H91.3501V29.2132H88.1761Z" fill="#E30A0B"/><path d="M78.0371 29.2132V14.7861H81.2111V29.2132H78.0371Z" fill="#E30A0B"/><path d="M60 29.2132V14.7861H63.4213L67.2135 20.8867L71.0058 14.7861H74.4271V29.2132H71.2737V19.7944L67.2135 25.9568H67.1311L63.1121 19.8562V29.2132H60Z" fill="#E30A0B"/></svg></a>
+    <div class="rk-mrk-header__tools">
+      <form class="rk-mrk-search" role="search" onsubmit="return false">
+        <span>Søg på Mit Røde Kors</span>
+        <button type="submit"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6316 2.84249C15.3028 1.51887 13.6197 0.606474 11.7845 0.214866C9.94919 -0.176743 8.03974 -0.0309126 6.28542 0.634844C4.5311 1.3006 3.0065 2.45798 1.89471 3.96799C0.782912 5.478 0.131192 7.27644 0.0178101 9.14734C-0.0955718 11.0182 0.334205 12.8821 1.25553 14.515C2.17686 16.1479 3.55056 17.4805 5.21167 18.3527C6.87278 19.2249 8.75068 19.5997 10.6199 19.432C12.489 19.2643 14.27 18.5613 15.7489 17.4074L22.1579 23.77C22.3796 23.9361 22.6539 24.0167 22.9303 23.9971C23.2067 23.9775 23.4668 23.8589 23.6628 23.6632C23.8588 23.4675 23.9775 23.2077 23.9971 22.9316C24.0167 22.6556 23.936 22.3816 23.7697 22.1602L17.3991 15.7593C18.8858 13.8895 19.6295 11.5377 19.4879 9.15434C19.3463 6.77094 18.3292 4.52351 16.6316 2.84249ZM14.9813 14.9927C14.2895 15.6869 13.4673 16.2377 12.5617 16.6136C11.6561 16.9895 10.6851 17.183 9.70448 17.183C8.72382 17.183 7.75283 16.9895 6.84726 16.6136C5.9417 16.2377 5.1194 15.6869 4.42761 14.9927C3.72892 14.3088 3.17519 13.4914 2.79938 12.5893C2.42357 11.6872 2.23337 10.7187 2.2401 9.74168C2.2401 7.75942 3.02855 5.85835 4.43199 4.45668C5.83543 3.05501 7.7389 2.26756 9.72366 2.26756C11.7084 2.26756 13.6119 3.05501 15.0153 4.45668C16.4188 5.85835 17.2072 7.75942 17.2072 9.74168C17.2068 10.7211 17.0096 11.6906 16.6272 12.5925C16.2449 13.4945 15.6852 14.3107 14.9813 14.9927Z" fill="currentColor"/></svg> Søg</button>
+      </form>
+      <a href="#" class="rk-mrk-logout"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17.76 15.84L21.6 12L17.76 8.15998M21.6 12H9.12002M14.88 4.51586C13.6563 3.78073 12.2355 3.35999 10.72 3.35999C6.12502 3.35999 2.40002 7.22824 2.40002 12C2.40002 16.7717 6.12502 20.64 10.72 20.64C12.2355 20.64 13.6563 20.2192 14.88 19.4841" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Log ud</a>
+    </div>
+    <div class="rk-mrk-mobile-tools">
+      <button class="rk-btn--tertiary" style="border:0;background:none;padding:4px" aria-label="Søg"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M16.6316 2.84249C15.3028 1.51887 13.6197 0.606474 11.7845 0.214866C9.94919 -0.176743 8.03974 -0.0309126 6.28542 0.634844C4.5311 1.3006 3.0065 2.45798 1.89471 3.96799C0.782912 5.478 0.131192 7.27644 0.0178101 9.14734C-0.0955718 11.0182 0.334205 12.8821 1.25553 14.515C2.17686 16.1479 3.55056 17.4805 5.21167 18.3527C6.87278 19.2249 8.75068 19.5997 10.6199 19.432C12.489 19.2643 14.27 18.5613 15.7489 17.4074L22.1579 23.77C22.3796 23.9361 22.6539 24.0167 22.9303 23.9971C23.2067 23.9775 23.4668 23.8589 23.6628 23.6632C23.8588 23.4675 23.9775 23.2077 23.9971 22.9316C24.0167 22.6556 23.936 22.3816 23.7697 22.1602L17.3991 15.7593C18.8858 13.8895 19.6295 11.5377 19.4879 9.15434C19.3463 6.77094 18.3292 4.52351 16.6316 2.84249ZM14.9813 14.9927C14.2895 15.6869 13.4673 16.2377 12.5617 16.6136C11.6561 16.9895 10.6851 17.183 9.70448 17.183C8.72382 17.183 7.75283 16.9895 6.84726 16.6136C5.9417 16.2377 5.1194 15.6869 4.42761 14.9927C3.72892 14.3088 3.17519 13.4914 2.79938 12.5893C2.42357 11.6872 2.23337 10.7187 2.2401 9.74168C2.2401 7.75942 3.02855 5.85835 4.43199 4.45668C5.83543 3.05501 7.7389 2.26756 9.72366 2.26756C11.7084 2.26756 13.6119 3.05501 15.0153 4.45668C16.4188 5.85835 17.2072 7.75942 17.2072 9.74168C17.2068 10.7211 17.0096 11.6906 16.6272 12.5925C16.2449 13.4945 15.6852 14.3107 14.9813 14.9927Z" fill="currentColor"/></svg></button>
+      <button style="border:0;background:none;padding:4px" aria-label="Åbn menu"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M28 22H2V20H28V22ZM28 16H2V14H28V16ZM28 10H2V8H28V10Z" fill="currentColor"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="rk-mrk-layout">
+
+  <!-- ===== SIDEMENU (fast – marker den aktive side med aria-current="page") ===== -->
+  <nav class="rk-mrk-sidebar" aria-label="Hovedmenu">
+    <h2>Til dig</h2>
+    <ul>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.77571 10.905C2.77571 10.3163 2.77571 10.022 2.85158 9.75094C2.91879 9.51084 3.02924 9.28501 3.17751 9.08454C3.34489 8.85824 3.57722 8.67754 4.04189 8.31613L10.9932 2.90954C11.3533 2.62947 11.5333 2.48944 11.7321 2.43562C11.9076 2.38812 12.0925 2.38812 12.2679 2.43562C12.4667 2.48944 12.6467 2.62947 13.0068 2.90954L19.9581 8.31613C20.4228 8.67754 20.6551 8.85824 20.8225 9.08454C20.9708 9.28501 21.0812 9.51084 21.1484 9.75094C21.2243 10.022 21.2243 10.3163 21.2243 10.905V18.3202C21.2243 19.4683 21.2243 20.0423 21.0009 20.4808C20.8044 20.8665 20.4908 21.18 20.1051 21.3766C19.6666 21.6 19.0926 21.6 17.9446 21.6H6.05546C4.90744 21.6 4.33343 21.6 3.89494 21.3766C3.50924 21.18 3.19566 20.8665 2.99913 20.4808C2.77571 20.0423 2.77571 19.4683 2.77571 18.3202V10.905Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Startside</a></li>
+      <li><a href="#" aria-current="page"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M7.19999 12L10.4 15.2L16.8 8.79999M7.51999 21.6H16.48C18.2722 21.6 19.1682 21.6 19.8528 21.2512C20.4549 20.9444 20.9444 20.4549 21.2512 19.8528C21.6 19.1682 21.6 18.2722 21.6 16.48V7.51999C21.6 5.72783 21.6 4.83174 21.2512 4.14722C20.9444 3.54511 20.4549 3.05557 19.8528 2.74877C19.1682 2.39999 18.2722 2.39999 16.48 2.39999H7.51999C5.72783 2.39999 4.83174 2.39999 4.14722 2.74877C3.54511 3.05557 3.05557 3.54511 2.74877 4.14722C2.39999 4.83174 2.39999 5.72783 2.39999 7.51999V16.48C2.39999 18.2722 2.39999 19.1682 2.74877 19.8528C3.05557 20.4549 3.54511 20.9444 4.14722 21.2512C4.83174 21.6 5.72783 21.6 7.51999 21.6Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Dine opgaver <span class="rk-count">5</span></a></li>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.6 8.65919V4.30079C21.6 2.94719 20.9856 2.39999 19.4592 2.39999H15.5808C14.0544 2.39999 13.44 2.94719 13.44 4.30079V8.64959C13.44 10.0128 14.0544 10.5504 15.5808 10.5504H19.4592C20.9856 10.56 21.6 10.0128 21.6 8.65919Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M21.6 19.4592V15.5808C21.6 14.0544 20.9856 13.44 19.4592 13.44H15.5808C14.0544 13.44 13.44 14.0544 13.44 15.5808V19.4592C13.44 20.9856 14.0544 21.6 15.5808 21.6H19.4592C20.9856 21.6 21.6 20.9856 21.6 19.4592Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.56 8.65919V4.30079C10.56 2.94719 9.94559 2.39999 8.41919 2.39999H4.54079C3.01439 2.39999 2.39999 2.94719 2.39999 4.30079V8.64959C2.39999 10.0128 3.01439 10.5504 4.54079 10.5504H8.41919C9.94559 10.56 10.56 10.0128 10.56 8.65919Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/><path d="M10.56 19.4592V15.5808C10.56 14.0544 9.94559 13.44 8.41919 13.44H4.54079C3.01439 13.44 2.39999 14.0544 2.39999 15.5808V19.4592C2.39999 20.9856 3.01439 21.6 4.54079 21.6H8.41919C9.94559 21.6 10.56 20.9856 10.56 19.4592Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Dine genveje</a></li>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12.8542 6.12395H5.3871C3.74587 6.12395 2.40219 7.46763 2.40219 9.10885V20.012M4.61928 21.3173L8.39121 19.2153C8.79432 18.9946 9.44698 18.9946 9.84049 19.2153L13.6124 21.3173C14.8313 21.9987 15.8295 21.4037 15.8295 20.012V9.10885C15.8391 7.46763 14.4954 6.12395 12.8542 6.12395M12.8542 6.12395C14.4954 6.12395 15.8391 7.46763 15.8391 9.10885M12.8542 6.12395H8.16088V5.3849C8.16088 3.74367 9.50456 2.39999 11.1458 2.39999H18.6129C20.2541 2.39999 21.5978 3.74367 21.5978 5.3849V16.288C21.5978 17.6797 20.5996 18.2652 19.3807 17.5933L15.8391 15.6162V9.10885M2.40219 20.012C2.40219 21.4037 3.40036 21.9987 4.61928 21.3173M2.40219 20.012C2.40219 21.4037 3.40036 21.9891 4.61928 21.3173M8.39121 19.2153C8.79432 18.9946 9.44699 18.9946 9.8501 19.2153L13.622 21.3173C14.841 21.9891 15.8391 21.4037 15.8391 20.012V9.10885" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Godt at vide</a></li>
+    </ul>
+    <hr>
+    <h2>Generelt</h2>
+    <ul>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 5.75285V20.1528M7.91999 8.63285H5.75999M8.63999 11.5128H5.75999M21.6 16.5528V4.96565C21.6 3.81365 20.6592 2.95925 19.5168 3.05525H19.4592C17.4432 3.22805 14.3808 4.25525 12.672 5.33045L12.5088 5.43605C12.2304 5.60885 11.7696 5.60885 11.4912 5.43605L11.2512 5.29205C9.54239 4.22645 6.48959 3.20885 4.47359 3.04565C3.33119 2.94965 2.39999 3.81365 2.39999 4.95605V16.5528C2.39999 17.4744 3.14879 18.3384 4.07039 18.4536L4.34879 18.492C6.43199 18.7704 9.64799 19.8264 11.4912 20.8344L11.5296 20.8536C11.7888 20.9976 12.2016 20.9976 12.4512 20.8536C14.2944 19.836 17.52 18.7704 19.6128 18.492L19.9296 18.4536C20.8512 18.3384 21.6 17.4744 21.6 16.5528Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Alle nyheder</a></li>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M5.88245 13.04L5.87284 17.5432C5.87284 18.7627 6.81382 20.0685 7.96604 20.4526L11.029 21.4704C11.5571 21.6432 12.4309 21.6432 12.9686 21.4704L16.0315 20.4526C17.1838 20.0685 18.1247 18.7627 18.1247 17.5432V13.088M21.0245 14.8835V9.12246M10.1264 2.9101L4.34616 6.6836C2.49301 7.89343 2.49301 10.6011 4.34616 11.811L10.1264 15.5845C11.1634 16.2662 12.8726 16.2662 13.9095 15.5845L19.661 11.811C21.5046 10.6011 21.5046 7.90303 19.661 6.6932L13.9095 2.9197C12.8726 2.22837 11.1634 2.22837 10.1264 2.9101Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Kurser</a></li>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M11.9935 5.5704C10.0741 3.32648 6.87338 2.72288 4.46853 4.77763C2.06368 6.83239 1.72511 10.2678 3.61365 12.698C5.04011 14.5336 9.09247 18.2185 10.9901 19.9119C11.339 20.2232 11.5134 20.3788 11.7176 20.4401C11.8949 20.4933 12.092 20.4933 12.2693 20.4401C12.4735 20.3788 12.6479 20.2232 12.9968 19.9119C14.8944 18.2185 18.9468 14.5336 20.3732 12.698C22.2618 10.2678 21.9646 6.81077 19.5184 4.77763C17.0722 2.74449 13.9128 3.32648 11.9935 5.5704Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Aktiviteter</a></li>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.5856 18.0768C21.5856 18.4224 21.5088 18.7776 21.3456 19.1232C21.1824 19.4688 20.9712 19.7952 20.6928 20.1024C20.2224 20.6208 19.704 20.9952 19.1184 21.2352C18.5424 21.4752 17.9184 21.6 17.2464 21.6C16.2672 21.6 15.2208 21.3696 14.1168 20.8992C13.0128 20.4288 11.9088 19.7952 10.8144 18.9984C9.71043 18.192 8.66403 17.2992 7.66563 16.3104C6.67683 15.312 5.78403 14.2656 4.98723 13.1712C4.20003 12.0768 3.56643 10.9824 3.10563 9.89759C2.64483 8.80319 2.41443 7.75679 2.41443 6.75839C2.41443 6.10559 2.52963 5.48159 2.76003 4.90559C2.99043 4.31999 3.35523 3.78239 3.86403 3.30239C4.47843 2.69759 5.15043 2.39999 5.86083 2.39999C6.12963 2.39999 6.39843 2.45759 6.63843 2.57279C6.88803 2.68799 7.10883 2.86079 7.28163 3.11039L9.50883 6.24959C9.68163 6.48959 9.80643 6.71039 9.89283 6.92159C9.97923 7.12319 10.0272 7.32479 10.0272 7.50719C10.0272 7.73759 9.96003 7.96799 9.82563 8.18879C9.70083 8.40959 9.51843 8.63999 9.28803 8.87039L8.55843 9.62879C8.45283 9.73439 8.40483 9.85919 8.40483 10.0128C8.40483 10.0896 8.41443 10.1568 8.43363 10.2336C8.46243 10.3104 8.49123 10.368 8.51043 10.4256C8.68323 10.7424 8.98083 11.1552 9.40323 11.6544C9.83523 12.1536 10.296 12.6624 10.7952 13.1712C11.3136 13.68 11.8128 14.1504 12.3216 14.5824C12.8208 15.0048 13.2336 15.2928 13.56 15.4656C13.608 15.4848 13.6656 15.5136 13.7328 15.5424C13.8096 15.5712 13.8864 15.5808 13.9728 15.5808C14.136 15.5808 14.2608 15.5232 14.3664 15.4176L15.096 14.6976C15.336 14.4576 15.5664 14.2752 15.7872 14.16C16.008 14.0256 16.2288 13.9584 16.4688 13.9584C16.6512 13.9584 16.8432 13.9968 17.0544 14.0832C17.2656 14.1696 17.4864 14.2944 17.7264 14.4576L20.904 16.7136C21.1536 16.8864 21.3264 17.088 21.432 17.328C21.528 17.568 21.5856 17.808 21.5856 18.0768Z" stroke="currentColor" stroke-miterlimit="10"/></svg> Telefonbog</a></li>
+    </ul>
+    <hr>
+    <ul>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M12 21.6C14.496 21.6 16.7616 20.6496 18.4704 19.0848C18.3744 18.1824 17.7984 17.2992 16.7712 16.608C14.16 14.8608 9.85922 14.8608 7.22882 16.608C6.20162 17.2992 5.62562 18.1824 5.52962 19.0848C7.23842 20.6496 9.50402 21.6 12 21.6ZM12 21.6C17.302 21.6 21.6 17.3019 21.6 12C21.6 6.69806 17.302 2.39999 12 2.39999C6.69809 2.39999 2.40002 6.69806 2.40002 12C2.40002 17.3019 6.69809 21.6 12 21.6ZM12.1152 12.7488C12.048 12.7392 11.9616 12.7392 11.8848 12.7488C10.1952 12.6912 8.85122 11.3088 8.85122 9.60959C8.85122 7.87199 10.2528 6.46079 12 6.46079C13.7376 6.46079 15.1488 7.87199 15.1488 9.60959C15.1392 11.3088 13.8048 12.6912 12.1152 12.7488Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> Min profil</a></li>
+      <li><a href="#"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9.94286 8.05944C10.1241 7.54425 10.4818 7.10983 10.9526 6.83311C11.4235 6.5564 11.9771 6.45524 12.5153 6.54757C13.0536 6.6399 13.5418 6.91975 13.8935 7.33755C14.2453 7.75536 14.4377 8.28416 14.4369 8.83029C14.4369 10.372 12.1244 11.1429 12.1244 11.1429M12.1542 14.2286H12.1645M9.84 19.0629L11.3417 21.0651C11.565 21.3629 11.6767 21.5118 11.8136 21.565C11.9335 21.6117 12.0665 21.6117 12.1864 21.565C12.3233 21.5118 12.435 21.3629 12.6583 21.0651L14.16 19.0629C14.4615 18.6608 14.6123 18.4598 14.7962 18.3063C15.0414 18.1017 15.3308 17.957 15.6417 17.8836C15.8748 17.8286 16.126 17.8286 16.6286 17.8286C18.0663 17.8286 18.7852 17.8286 19.3523 17.5937C20.1084 17.2805 20.7091 16.6798 21.0223 15.9237C21.2571 15.3566 21.2571 14.6378 21.2571 13.2V7.33714C21.2571 5.60897 21.2571 4.74489 20.9208 4.08482C20.625 3.50421 20.1529 3.03215 19.5723 2.73632C18.9122 2.39999 18.0482 2.39999 16.32 2.39999H7.68C5.95184 2.39999 5.08776 2.39999 4.42769 2.73632C3.84707 3.03215 3.37502 3.50421 3.07918 4.08482C2.74286 4.74489 2.74286 5.60897 2.74286 7.33714V13.2C2.74286 14.6378 2.74286 15.3566 2.97774 15.9237C3.29093 16.6798 3.89163 17.2805 4.64772 17.5937C5.21479 17.8286 5.93367 17.8286 7.37143 17.8286C7.87397 17.8286 8.12524 17.8286 8.35835 17.8836C8.66917 17.957 8.95864 18.1017 9.20383 18.3063C9.38772 18.4598 9.53848 18.6608 9.84 19.0629Z" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"/></svg> IT support</a></li>
+    </ul>
+  </nav>
+
+  <!-- ===== INDHOLD – erstat med sidens indhold ===== -->
+  <main class="rk-mrk-main" id="indhold">
+
+<nav class="rk-breadcrumb" aria-label="Brødkrumme"><a href="#">Mit Røde Kors</a> / <a href="#">Dine opgaver</a> / <span aria-current="page">Frivillighenvendelser til matching</span></nav>
+
+<h1>Dine opgaver</h1>
+
+<div class="rk-tabs">
+  <a href="#">Dine opgaver</a>
+  <a href="#">Frivillighenvendelser</a>
+  <a href="#" aria-current="page">Frivillighenvendelser til matching</a>
+  <a href="#">Kampagner</a>
+</div>
+
+<div class="mt-kilde">
+  <label class="rk-label" for="kilde">Kilde:</label>
+  <select class="rk-select" id="kilde">
+    <option value="">Alle</option>
+    <option>Webformular</option>
+    <option>Kampagne</option>
+    <option>Afdeling</option>
+  </select>
+</div>
+
+<div class="mt-toolbar">
+  <div class="mt-search">
+    <label class="mt-sr" for="soeg">Søg i henvendelser</label>
+    <input class="rk-input" id="soeg" type="search" placeholder="Søg">
+    <span class="mt-search__icon" aria-hidden="true"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21.8182 21.8182L17.0727 17.0727M19.6364 10.9091C19.6364 15.729 15.729 19.6364 10.9091 19.6364C6.08916 19.6364 2.18182 15.729 2.18182 10.9091C2.18182 6.08916 6.08916 2.18182 10.9091 2.18182C15.729 2.18182 19.6364 6.08916 19.6364 10.9091Z" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+  </div>
+  <div class="mt-toggle" role="group" aria-label="Vis henvendelser">
+    <button type="button" class="mt-toggle__btn" aria-pressed="true" data-status="ny">Nye</button>
+    <button type="button" class="mt-toggle__btn" aria-pressed="false" data-status="behandlet">Behandlede</button>
+  </div>
+  <button type="button" class="mt-copy" id="kopier"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M8.07311 12.1968H14.9456M8.07311 16.1238H12.3733M15.9272 4.16567C19.1965 4.34239 20.8361 5.54999 20.8361 10.0368V15.9275C20.8361 19.8546 19.8543 21.8182 14.9454 21.8182H9.05466C4.14573 21.8182 3.16394 19.8546 3.16394 15.9275V10.0368C3.16394 5.55981 4.80352 4.34239 8.07287 4.16567M10.0367 6.10897H13.9638C15.9274 6.10897 15.9274 5.12718 15.9274 4.1454C15.9274 2.18182 14.9456 2.18182 13.9638 2.18182H10.0367C9.0549 2.18182 8.07311 2.18182 8.07311 4.1454C8.07311 6.10897 9.0549 6.10897 10.0367 6.10897Z" stroke="currentColor" stroke-width="1.3" stroke-miterlimit="10" stroke-linecap="round" stroke-linejoin="round"/></svg> Kopier mails</button>
+</div>
+<p class="mt-status" id="status" aria-live="polite"></p>
+
+<div class="mt-list" id="liste"></div>
+<p class="mt-empty" id="tom" hidden>Der er ingen henvendelser, der passer til din søgning.</p>
+
+<div class="rk-modal-backdrop" id="modal" hidden>
+  <div class="rk-modal mt-modal" role="dialog" aria-modal="true" aria-labelledby="m-titel">
+    <button class="rk-modal__close" type="button" id="m-luk" aria-label="Luk"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <h2 id="m-titel">Henvendelse</h2>
+    <dl class="mt-info">
+      <div class="mt-info__row"><dt>Navn:</dt><dd id="m-navn"></dd></div>
+      <div class="mt-info__row mt-info__row--mail"><dt>Mail:</dt><dd><a id="m-mail" href="#"></a>
+        <span class="mt-mailbtns">
+          <a class="mt-smallbtn" id="m-sendmail" href="#" target="_blank" rel="noopener"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none"><path d="M7.4 6.32 15.89 3.49c3.81-1.27 5.88.81 4.62 4.62l-2.83 8.49c-1.9 5.71-5.02 5.71-6.92 0l-.84-2.52-2.52-.84c-5.71-1.9-5.71-5.01 0-6.92ZM10.11 13.65l3.58-3.59" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> Send mail</a>
+          <button type="button" class="mt-smallbtn" id="m-kopier"><svg aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none"><path d="M16 12.9v4.2c0 3.5-1.4 4.9-4.9 4.9H6.9C3.4 22 2 20.6 2 17.1v-4.2C2 9.4 3.4 8 6.9 8h4.2c3.5 0 4.9 1.4 4.9 4.9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M22 6.9v4.2c0 3.5-1.4 4.9-4.9 4.9H16v-3.1C16 9.4 14.6 8 11.1 8H8V6.9C8 3.4 9.4 2 12.9 2h4.2C20.6 2 22 3.4 22 6.9Z" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg> <span id="m-kopier-tekst">Kopier</span></button>
+        </span></dd></div>
+      <div class="mt-info__row"><dt>Tlf:</dt><dd><a id="m-tlf" href="#"></a></dd></div>
+      <div class="mt-info__row"><dt>Postnr:</dt><dd id="m-postnr"></dd></div>
+      <div class="mt-info__row"><dt>Alder:</dt><dd id="m-alder"></dd></div>
+      <div class="mt-info__row"><dt>Motivation:</dt><dd id="m-motivation"></dd></div>
+      <div class="mt-info__row"><dt>Henvendelse sidst behandlet af:</dt><dd id="m-sidst"></dd></div>
+      <div class="mt-info__row"><dt>Kommentar om henvendelsen</dt><dd id="m-kommentar"></dd></div>
+      <div class="mt-info__row"><dt>Henvendelses&shy;tidspunkt:</dt><dd id="m-tid"></dd></div>
+      <div class="mt-info__row"><dt>Kilde:</dt><dd id="m-kilde"></dd></div>
+    </dl>
+    <div class="rk-field mt-noter"><label class="rk-label" for="m-noter">Dine noter</label>
+      <textarea class="rk-textarea" id="m-noter" placeholder="Skriv en note angående henvendelsen her. For eksempel hvis du har taget kontakt."></textarea>
+    </div>
+    <div id="m-naeste">
+      <h3 class="mt-naeste__titel">Næste skridt</h3>
+      <p class="mt-naeste__tekst">Vælg hvad der skal ske med henvendelsen. Du kan oprette personen som frivillig i din aktivitet eller tilbagesende henvendelsen, hvis du ikke kunne få fat på personen eller vedkommende ikke skal starte i aktiviteten.</p>
+      <div class="mt-naeste__knapper">
+        <button type="button" class="rk-btn rk-btn--secondary" id="m-tilbage">Tilbagesend henvendelse</button>
+        <button type="button" class="rk-btn rk-btn--primary" id="m-opret">Opret personen som frivillig</button>
+      </div>
+    </div>
+    <hr class="mt-modal__divider">
+    <div class="mt-modal__gem"><button type="button" class="rk-btn rk-btn--primary" id="m-gem">Gem</button></div>
+  </div>
+</div>
+
+<div class="rk-modal-backdrop" id="modal-tb" hidden>
+  <div class="rk-modal mt-tb" role="dialog" aria-modal="true" aria-labelledby="tb-titel">
+    <button class="rk-modal__close" type="button" id="tb-luk" aria-label="Luk"><svg class="rk-icon" aria-hidden="true" focusable="false" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <div class="mt-tb__intro">
+      <h2 id="tb-titel">Du er ved at sende denne henvendelse tilbage</h2>
+      <p>Når du tilbagesender en henvendelse, vil en relevant frivillig i din afdeling eller en ansat på landskontoret sørge for at behandle henvendelsen og finde en passende aktivitet til vedkommende.</p>
+    </div>
+    <div class="rk-field mt-tb__aarsag" id="tb-aarsag-felt">
+      <fieldset class="rk-fieldset" aria-describedby="tb-fejl">
+        <legend>Hvorfor tilbagesender du denne henvendelse?*</legend>
+        <label class="rk-choice"><input type="radio" name="tb-aarsag" value="Ingen kontakt"> Ingen kontakt</label>
+        <label class="rk-choice"><input type="radio" name="tb-aarsag" value="Ikke relevant"> Ikke relevant</label>
+      </fieldset>
+      <span class="rk-error-text" id="tb-fejl" hidden>Vælg, hvorfor du tilbagesender henvendelsen</span>
+    </div>
+    <div class="rk-field mt-tb__kommentar"><label class="rk-label" for="tb-kommentar">Kommentar</label>
+      <textarea class="rk-textarea" id="tb-kommentar" placeholder="Uddyb gerne her"></textarea>
+    </div>
+    <div class="mt-tb__knapper">
+      <button type="button" class="rk-btn rk-btn--secondary" id="tb-annuller">Annullér</button>
+      <button type="button" class="rk-btn rk-btn--primary" id="tb-send">Send tilbage</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  var data = [
+    { id: 1, navn: 'Fatima Ahmadi', mail: 'fatima@eksempel.dk', tlf: '61 23 45 67', postnr: '8000 Aarhus C', alder: 34, kilde: 'Webformular', kildeDetalje: 'Bliv frivillig-formular, rodekors.dk', dage: 40, behandler: '', sidst: 'Landskontoret', kommentar: 'Fatima taler arabisk og dansk og vil gerne hjælpe nyankomne familier.', motivation: 'Jeg kom selv til Danmark som barn og ved, hvor meget det betyder at have nogen at spørge. Nu vil jeg gerne være den person for andre familier.', note: '', status: 'ny' },
+    { id: 2, navn: 'Peter Sørensen', tilbagesendt: true, mail: 'peter@eksempel.dk', tlf: '22 33 44 55', postnr: '8700 Horsens', alder: 67, kilde: 'Webformular', kildeDetalje: 'Besøgsven, Facebook Horsens', dage: 40, behandler: '', sidst: 'Aktivitetsleder, Besøgsvenner Horsens', kommentar: 'Sendt tilbage: Der er ikke plads på holdet lige nu. Måske passer han ind i en nabo-aktivitet.', motivation: 'Jeg er netop gået på pension og har tid til overs. Jeg vil gerne besøge ældre, der sidder meget alene.', note: '', status: 'ny' },
+    { id: 3, navn: 'Lene Kristiansen', mail: 'lene@eksempel.dk', tlf: '40 50 60 70', postnr: '9800 Hjørring', alder: 52, kilde: 'Kampagne', kildeDetalje: 'Strikkekampagne, Instagram', dage: 40, behandler: 'Hugo Yates\nBRUGES AF MRK-PROJEKT', sidst: 'Landskontoret / Hugo Yates', kommentar: 'Lene har strikket til Røde Kors i mange år og vil gerne være en del af et fællesskab.', motivation: 'Jeg vil gerne strikke sammen med andre i stedet for alene derhjemme, og det giver mening, at det, vi laver, kommer nogen til gavn.', note: 'Note fra Sofie d. 27/10', status: 'ny' },
+    { id: 4, navn: 'Ulrik Larsen', mail: 'ulrik@eksempel.dk', tlf: '12 34 56 78', postnr: '2100 København Ø', alder: 41, kilde: 'Webformular', kildeDetalje: 'Bliv frivillig-formular, rodekors.dk', dage: 11, udloeber: 3, behandler: '', sidst: 'Landskontoret', kommentar: 'Ulrik er uddannet sygeplejerske og vil gerne bruge sin faglighed.', motivation: 'Jeg har arbejdet i sundhedsvæsenet i mange år og vil gerne hjælpe mennesker, der ikke har let adgang til hjælp.', note: 'Har forsøgt at ringe til Ulrik. Har sendt en mail.', status: 'ny' },
+    { id: 5, navn: 'Michael Michaelsen', mail: 'michael@eksempel.dk', tlf: '23 45 67 89', postnr: '5000 Odense C', alder: 28, kilde: 'Afdeling', kildeDetalje: 'Afdelingens stand, Odense Festuge', dage: 6, behandler: '', sidst: 'Landskontoret', kommentar: 'Michael er interesseret i lektiehjælp.', motivation: 'Jeg læser til lærer og vil gerne hjælpe børn med lektierne, så de får en bedre start på skolen.', note: 'Jeg har kontaktet Michael i går. Han skal have lidt betænkningstid', status: 'ny' },
+    { id: 6, navn: 'Michael Michaelsen', tilbagesendt: true, mail: 'michael.m@eksempel.dk', tlf: '34 56 78 90', postnr: '7100 Vejle', alder: 45, kilde: 'Kampagne', kildeDetalje: 'Førstehjælpskampagne, Facebook', dage: 4, behandler: '', sidst: 'Aktivitetsleder, Førstehjælp Vejle', kommentar: 'Sendt tilbage: Michael ønsker at være frivillig om aftenen, og holdet mødes kun om dagen.', motivation: 'Jeg har taget et førstehjælpskursus og vil gerne lære andre det samme. Det føles vigtigt at kunne hjælpe, når det gælder.', note: '', status: 'ny' },
+    { id: 7, navn: 'Karen Holm', mail: 'karen@eksempel.dk', tlf: '45 67 89 01', postnr: '3400 Hillerød', alder: 59, kilde: 'Webformular', kildeDetalje: 'Bliv frivillig-formular, rodekors.dk', dage: 22, behandler: 'Sofie Nørgaard', sidst: 'Sofie Nørgaard', kommentar: 'Karen har tidligere arbejdet med socialt udsatte og er uddannet coach.', motivation: 'Jeg vil gerne bruge mine erfaringer fra arbejdet med socialt udsatte på en meningsfuld måde.', note: 'Matchet med besøgsvennerne i Hillerød.', status: 'behandlet' },
+    { id: 8, navn: 'Jonas Bech', mail: 'jonas@eksempel.dk', tlf: '56 78 90 12', postnr: '6700 Esbjerg', alder: 23, kilde: 'Afdeling', kildeDetalje: 'Studiemesse, Esbjerg', dage: 15, behandler: 'Hugo Yates', sidst: 'Hugo Yates', kommentar: 'Jonas vil gerne hjælpe i lektiecaféen.', motivation: 'Jeg vil gerne give noget tilbage og møde nye mennesker ved siden af studiet.', note: 'Startet i lektiecaféen.', status: 'behandlet' }
+  ];
+  var visStatus = 'ny', aktiv = null, retur = null;
+  var $ = function (id) { return document.getElementById(id); };
+  var esc = function (s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); };
+  var lines = function (s) { return s ? esc(s).replace(/\n/g, '<br>') : '-'; };
+  var dage = function (n) { return n === 1 ? '1 dag' : n + ' dage'; };
+
+  function synlige() {
+    var q = $('soeg').value.trim().toLowerCase(), k = $('kilde').value;
+    return data.filter(function (d) {
+      return d.status === visStatus && (!k || d.kilde === k) &&
+        (!q || (d.navn + ' ' + d.note + ' ' + d.mail + ' ' + d.behandler).toLowerCase().indexOf(q) > -1);
+    });
+  }
+
+  function tegn() {
+    var rows = synlige();
+    $('liste').innerHTML = rows.map(function (d) {
+      return '<article class="mt-row">' +
+        '<div class="mt-row__name"><p class="mt-name">' + esc(d.navn) + '</p>' + (d.tilbagesendt ? '<p class="mt-warn">Tilbagesendt</p>' : '') + '</div>' +
+        '<div><p class="mt-h">Modtaget:</p><p>' + dage(d.dage) + ' siden</p>' +
+          (d.udloeber && d.status === 'ny' ? '<p class="mt-warn">Udløber om ' + dage(d.udloeber) + '</p>' : '') + '</div>' +
+        '<div><p class="mt-h">Behandles af:</p><p>' + lines(d.behandler) + '</p></div>' +
+        '<div><p class="mt-h">Dine noter:</p><p>' + lines(d.note) + '</p></div>' +
+        '<div class="mt-row__action"><button type="button" class="rk-btn rk-btn--tertiary mt-open" data-id="' + d.id + '" aria-label="Åbn henvendelse fra ' + esc(d.navn) + '">Åbn</button></div>' +
+      '</article>';
+    }).join('');
+    $('tom').hidden = rows.length > 0;
+  }
+
+  function kopier(tekst, done) {
+    if (navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(tekst).then(done, done); else done();
+  }
+
+  document.querySelectorAll('.mt-toggle__btn').forEach(function (b) {
+    b.addEventListener('click', function () {
+      visStatus = b.dataset.status;
+      document.querySelectorAll('.mt-toggle__btn').forEach(function (x) { x.setAttribute('aria-pressed', x === b); });
+      $('status').textContent = ''; tegn();
+    });
+  });
+  $('soeg').addEventListener('input', tegn);
+  $('kilde').addEventListener('change', tegn);
+
+  $('kopier').addEventListener('click', function () {
+    var mails = synlige().map(function (d) { return d.mail; });
+    kopier(mails.join('; '), function () { $('status').textContent = mails.length + (mails.length === 1 ? ' mail' : ' mails') + ' er kopieret.'; });
+  });
+
+  $('liste').addEventListener('click', function (e) {
+    var b = e.target.closest('.mt-open'); if (!b) return;
+    aktiv = data.find(function (d) { return d.id === +b.dataset.id; });
+    retur = b;
+    $('m-navn').textContent = aktiv.navn;
+    $('m-mail').textContent = aktiv.mail; $('m-mail').href = 'mailto:' + aktiv.mail;
+    $('m-sendmail').href = 'https://outlook.office.com/mail/deeplink/compose?to=' + encodeURIComponent(aktiv.mail) +
+      '&subject=' + encodeURIComponent('Din henvendelse om at blive frivillig i Røde Kors');
+    $('m-kopier-tekst').textContent = 'Kopier';
+    $('m-tlf').textContent = aktiv.tlf; $('m-tlf').href = 'tel:' + aktiv.tlf.replace(/\s/g, '');
+    $('m-postnr').textContent = aktiv.postnr;
+    $('m-alder').textContent = aktiv.alder;
+    $('m-motivation').textContent = aktiv.motivation;
+    $('m-sidst').textContent = aktiv.sidst;
+    $('m-kommentar').textContent = aktiv.kommentar || '-';
+    $('m-tid').textContent = 'For ' + dage(aktiv.dage) + ' siden';
+    $('m-kilde').textContent = aktiv.kildeDetalje;
+    $('m-noter').value = aktiv.note;
+    $('m-naeste').hidden = aktiv.status === 'behandlet';
+    $('modal').hidden = false; document.body.style.overflow = 'hidden';
+    $('modal').scrollTop = 0; $('m-luk').focus();
+  });
+
+  $('m-kopier').addEventListener('click', function () {
+    kopier(aktiv.mail, function () { $('m-kopier-tekst').textContent = 'Kopieret'; });
+  });
+
+  function luk() {
+    $('modal').hidden = true; document.body.style.overflow = ''; aktiv = null;
+    if (retur && document.body.contains(retur)) retur.focus();
+  }
+  function afslut(besked, behandlet) {
+    aktiv.note = $('m-noter').value.trim();
+    if (behandlet) { aktiv.status = 'behandlet'; aktiv.tilbagesendt = false; }
+    var m = besked.replace('{navn}', aktiv.navn);
+    luk(); tegn(); $('status').textContent = m;
+  }
+  $('m-gem').addEventListener('click', function () { afslut('Dine noter til {navn} er gemt.', false); });
+  $('m-tilbage').addEventListener('click', function () {
+    aktiv.note = $('m-noter').value.trim();
+    document.querySelectorAll('input[name="tb-aarsag"]').forEach(function (r) { r.checked = false; });
+    $('tb-kommentar').value = '';
+    visFejl(false);
+    $('modal').hidden = true; $('modal-tb').hidden = false; $('modal-tb').scrollTop = 0; $('tb-luk').focus();
+  });
+  function visFejl(on) {
+    $('tb-fejl').hidden = !on;
+    $('tb-aarsag-felt').classList.toggle('rk-field--error', on);
+  }
+  function tilbageTilHenvendelse() {
+    $('modal-tb').hidden = true; $('modal').hidden = false; $('m-tilbage').focus();
+  }
+  document.querySelectorAll('input[name="tb-aarsag"]').forEach(function (r) { r.addEventListener('change', function () { visFejl(false); }); });
+  $('tb-annuller').addEventListener('click', tilbageTilHenvendelse);
+  $('tb-luk').addEventListener('click', tilbageTilHenvendelse);
+  $('modal-tb').addEventListener('click', function (e) { if (e.target === $('modal-tb')) tilbageTilHenvendelse(); });
+  $('tb-send').addEventListener('click', function () {
+    var valgt = document.querySelector('input[name="tb-aarsag"]:checked');
+    if (!valgt) { visFejl(true); document.querySelector('input[name="tb-aarsag"]').focus(); return; }
+    aktiv.tilbagesendtAarsag = valgt.value; aktiv.tilbagesendtKommentar = $('tb-kommentar').value.trim();
+    aktiv.status = 'behandlet'; aktiv.tilbagesendt = false;
+    var n = aktiv.navn;
+    $('modal-tb').hidden = true; luk(); tegn();
+    $('status').textContent = 'Henvendelsen fra ' + n + ' er sendt tilbage (' + valgt.value.toLowerCase() + ') og ligger nu under Behandlede.';
+  });
+  $('m-opret').addEventListener('click', function () { afslut('{navn} er oprettet som frivillig. Henvendelsen ligger nu under Behandlede.', true); });
+  $('m-luk').addEventListener('click', luk);
+  $('modal').addEventListener('click', function (e) { if (e.target === $('modal')) luk(); });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    if (!$('modal-tb').hidden) tilbageTilHenvendelse(); else if (!$('modal').hidden) luk();
+  });
+
+  tegn();
+})();
+</script>
+
+</main>
+</div>
+
+<!-- ===== FOOTER (fast – må ikke ændres) ===== -->
+<footer class="rk-mrk-footer">
+  <div class="rk-mrk-footer__grid">
+    <div>
+      <div style="width:44px;height:44px;margin-bottom:var(--rk-s-5)"><svg class="rk-logo rk-logo--kors" viewBox="0 0 150 150" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Røde Kors"><path d="M150 50.1291H99.8771V0H50.1229V50.1291H0V99.8893H50.1229V150H99.8771V99.8893H150V50.1291Z" fill="#E30A0B"/></svg></div>
+      <h2>Tak, fordi du gør en forskel</h2>
+    </div>
+    <div>
+      <h3>Landskontoret</h3>
+      <p>Blegdamsvej 27<br>2100 København Ø<br>info@rodekors.dk<br>+45 35 25 92 00</p>
+    </div>
+    <div>
+      <h3>Åbningstider</h3>
+      <p>Man–tor: 8.30–16.00<br>Fredag: 8.30–15.00<br>Lør–søn: Lukket</p>
+    </div>
+    <div class="rk-mrk-footer__links">
+      <a href="#">Gå til Rødekors.dk</a>
+      <a href="#">Privatlivspolitik</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
